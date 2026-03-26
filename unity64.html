@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unity 6.4 — What's New</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0c0c0f;--surface:#141418;--card:#1a1a20;--card-hover:#22222a;
+  --border:#2a2a35;--border-light:#3a3a48;
+  --text:#e8e6e1;--text-muted:#9a98a0;--text-dim:#6a6872;
+  --accent:#7c6aef;--accent-light:#9a8af7;--accent-dim:#5a4cc0;
+  --teal:#2dd4a8;--teal-dim:#1a9070;--teal-bg:rgba(45,212,168,0.08);
+  --coral:#ef7a5a;--coral-dim:#b85a40;--coral-bg:rgba(239,122,90,0.08);
+  --blue:#5a9cf5;--blue-dim:#3a70c0;--blue-bg:rgba(90,156,245,0.08);
+  --amber:#f0b040;--amber-dim:#b08020;--amber-bg:rgba(240,176,64,0.08);
+  --pink:#e06090;--pink-dim:#a04060;
+  --radius:12px;--radius-lg:16px;--radius-sm:8px;
+  --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{font-family:var(--font);color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* Noise overlay */
+body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:256px}
+
+.container{max-width:960px;margin:0 auto;padding:0 24px}
+
+/* Hero */
+.hero{padding:80px 0 48px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-120px;left:50%;transform:translateX(-50%);
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(124,106,239,0.12) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;
+  background:rgba(124,106,239,0.1);border:1px solid rgba(124,106,239,0.2);
+  border-radius:20px;font-size:12px;letter-spacing:0.5px;color:var(--accent-light);
+  font-weight:500;text-transform:uppercase;margin-bottom:20px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);
+  animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero h1{font-size:clamp(36px,5vw,56px);font-weight:700;line-height:1.1;
+  letter-spacing:-1.5px;margin-bottom:16px}
+.hero h1 span{background:linear-gradient(135deg,var(--accent-light),var(--teal));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:18px;color:var(--text-muted);max-width:560px;font-weight:300}
+.hero-meta{display:flex;gap:24px;margin-top:28px;flex-wrap:wrap}
+.hero-meta-item{font-size:13px;color:var(--text-dim);display:flex;align-items:center;gap:6px}
+.hero-meta-item strong{color:var(--text-muted);font-weight:500}
+
+/* Nav pills */
+.nav-bar{position:sticky;top:0;z-index:100;padding:12px 0;
+  background:rgba(12,12,15,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.nav-inner{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:4px 0}
+.nav-inner::-webkit-scrollbar{display:none}
+.nav-pill{padding:7px 16px;border-radius:20px;font-size:13px;font-weight:500;
+  white-space:nowrap;cursor:pointer;transition:all 0.2s;border:1px solid transparent;
+  color:var(--text-muted);text-decoration:none;flex-shrink:0}
+.nav-pill:hover{color:var(--text);background:var(--card)}
+.nav-pill.active{color:var(--accent-light);background:rgba(124,106,239,0.1);border-color:rgba(124,106,239,0.25)}
+
+/* Section */
+.section{padding:56px 0 0}
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--text-dim);font-weight:600;margin-bottom:8px}
+
+/* Feature card */
+.feature-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:32px;margin-bottom:20px;position:relative;overflow:hidden;
+  transition:border-color 0.3s,transform 0.2s}
+.feature-card:hover{border-color:var(--border-light);transform:translateY(-1px)}
+.feature-card .tag{display:inline-block;padding:4px 10px;border-radius:6px;
+  font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:16px}
+.tag-teal{background:var(--teal-bg);color:var(--teal)}
+.tag-coral{background:var(--coral-bg);color:var(--coral)}
+.tag-blue{background:var(--blue-bg);color:var(--blue)}
+.tag-amber{background:var(--amber-bg);color:var(--amber)}
+.feature-card h3{font-size:22px;font-weight:600;letter-spacing:-0.5px;margin-bottom:10px}
+.feature-card .desc{color:var(--text-muted);font-size:15px;line-height:1.7;margin-bottom:20px}
+.feature-card .desc strong{color:var(--text);font-weight:500}
+
+/* Detail list inside card */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.detail-grid{grid-template-columns:1fr}}
+.detail-item{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;
+  border:1px solid var(--border)}
+.detail-item .label{font-size:11px;text-transform:uppercase;letter-spacing:0.8px;
+  color:var(--text-dim);font-weight:500;margin-bottom:4px}
+.detail-item .value{font-size:14px;color:var(--text)}
+
+/* AEGIS box */
+.aegis-box{margin-top:20px;padding:16px 20px;border-radius:var(--radius-sm);
+  background:rgba(240,176,64,0.05);border:1px solid rgba(240,176,64,0.15);
+  border-left:3px solid var(--amber)}
+.aegis-box .aegis-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--amber);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.aegis-box p{font-size:13px;color:var(--text-muted);line-height:1.6}
+
+/* Minor features grid */
+.minor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px}
+.minor-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;transition:border-color 0.3s}
+.minor-card:hover{border-color:var(--border-light)}
+.minor-card h4{font-size:15px;font-weight:600;margin-bottom:6px}
+.minor-card p{font-size:13px;color:var(--text-muted);line-height:1.5}
+.minor-card .minor-aegis{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);
+  font-size:12px;color:var(--amber-dim);line-height:1.4}
+
+/* Release info */
+.release-bar{margin-top:56px;padding:24px 0;border-top:1px solid var(--border)}
+.release-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  align-items:center}
+.release-inner .left{font-size:14px;color:var(--text-muted)}
+.release-inner .left strong{color:var(--text);font-weight:500}
+.release-tag{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:500;
+  background:rgba(45,212,168,0.1);color:var(--teal);border:1px solid rgba(45,212,168,0.2)}
+
+/* Roadmap teaser */
+.roadmap{margin:48px 0 80px;padding:28px 32px;background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius-lg);display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.roadmap-icon{width:48px;height:48px;border-radius:12px;
+  background:linear-gradient(135deg,var(--accent-dim),var(--teal-dim));
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.roadmap-text h4{font-size:16px;font-weight:600;margin-bottom:4px}
+.roadmap-text p{font-size:13px;color:var(--text-muted);line-height:1.5}
+
+/* Code style */
+code{font-family:var(--mono);font-size:13px;background:var(--surface);
+  padding:2px 7px;border-radius:4px;color:var(--accent-light)}
+
+/* Scroll animations */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge"><span class="dot"></span> Stable Release</div>
+    <h1>Unity <span>6.4</span><br>What's New</h1>
+    <p class="hero-sub">ECS 코어 통합, Project Auditor 내장, Grid/Snap 전면 개편 등 Unity 6.4의 주요 변경사항과 AEGIS 프로젝트 활용 방안 정리</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">📅 <strong>2026-03-24</strong> 릴리즈</div>
+      <div class="hero-meta-item">🔖 버전 <strong>6000.4</strong></div>
+      <div class="hero-meta-item">📺 Source: <strong>SpeedTutor</strong></div>
+      <div class="hero-meta-item">🏗️ <strong>Supported</strong> (LTS 수준 QA)</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-bar">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="nav-pill active" href="#editor">Editor Workflow</a>
+      <a class="nav-pill" href="#core">Core Engine</a>
+      <a class="nav-pill" href="#analysis">Analysis / QA</a>
+      <a class="nav-pill" href="#additional">Additional</a>
+      <a class="nav-pill" href="#roadmap">Roadmap</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ===== EDITOR WORKFLOW ===== -->
+  <div class="section" id="editor">
+    <div class="section-label">Editor Workflow</div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-teal">Grid & Snap</span>
+      <h3>Grid and Snap 워크플로 전면 개편</h3>
+      <p class="desc">
+        Scene View의 그리드에 <strong>커스텀 위치와 회전(rotation)</strong>을 부여할 수 있게 되었습니다.
+        기존에는 절대 그리드 스냅만 가능해서 직교 정렬 레벨에만 유용했지만,
+        이제 다리나 경사로처럼 회전된 레벨 요소에도 그리드를 맞출 수 있습니다.
+      </p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="label">주요 변경</div>
+          <div class="value">Grid and Snap 오버레이 재설계, 단일 설정 메뉴 통합</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">새 기능</div>
+          <div class="value">Grid Tool 핸들 회전, 커스텀 단축키, 컨텍스트 메뉴</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">워크플로 개선</div>
+          <div class="value">Grid 크기와 Incremental Snap 크기 분리</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">접근</div>
+          <div class="value"><code>`</code> 키 → Overlay 메뉴 → Grid and Snap</div>
+        </div>
+      </div>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용</div>
+        <p>5v5 전술 슈터 맵의 경사 지형, 비정렬 구조물(계단, 각진 통로) 배치 속도가 대폭 향상됩니다. 저사양 기기에서 정확한 콜리전 피팅을 위한 정밀 배치에 직접 도움됩니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-teal">Terrain</span>
+      <h3>Terrain Layer 드래그 앤 드롭</h3>
+      <p class="desc">
+        Scene View와 Inspector 창에서 <strong>Terrain Layer를 드래그 앤 드롭</strong>으로 배치 가능합니다.
+        Shader Graph에 <strong>Terrain 셰이더 템플릿</strong>이 추가되어 커스텀 지형 셰이더 작업도 간편해졌고,
+        Terrain 노드가 각 Terrain과 TerrainData 에셋에 저장된 정보를 노출합니다.
+      </p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="label">드래그 앤 드롭</div>
+          <div class="value">Scene View + Inspector에서 Terrain Layer 직접 배치</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">Shader Graph</div>
+          <div class="value">Terrain 템플릿, Terrain 노드 (LOD 전환, max height 등)</div>
+        </div>
+      </div>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용</div>
+        <p>지형 텍스처링 작업 속도 향상. Shader Graph Terrain 템플릿으로 2GB RAM 디바이스 최적화된 커스텀 지형 셰이더를 더 쉽게 제작할 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CORE ENGINE ===== -->
+  <div class="section" id="core">
+    <div class="section-label">Core Engine</div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-coral">ECS</span>
+      <h3>ECS — 코어 패키지로 통합</h3>
+      <p class="desc">
+        <strong>Entities, Collections, Mathematics, Entities Graphics</strong> 패키지가 Core 패키지로 편입되어
+        에디터와 함께 기본 배포됩니다. 기존 <code>InstanceID</code>는 새로운 <code>EntityId</code> 타입으로 대체되며,
+        InstanceID 메서드는 deprecated 처리됩니다.
+      </p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="label">핵심 변경</div>
+          <div class="value">ECS 4개 패키지 → Core package (에디터 내장)</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">ID 시스템</div>
+          <div class="value">InstanceID → EntityId (단일 int 캐스팅 불가)</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">로드맵</div>
+          <div class="value">ECS 컴포넌트를 GameObject에 직접 부착 (점진적 통합)</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">마이그레이션</div>
+          <div class="value">EntityId ↔ int 캐스팅 코드 점검 필요</div>
+        </div>
+      </div>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용 — 높은 관련성</div>
+        <p>2GB RAM 타겟 디바이스 최적화의 핵심. M1 분석에서 발견된 Draw Call 병목(평균 727 vs 목표 200)을 해결하는 데 ECS 기반 렌더링 파이프라인이 직접적으로 도움됩니다. 코어 패키지 편입으로 프로젝트 셋업 복잡도도 감소. EntityId 전환에 따른 기존 코드 마이그레이션을 프로그래밍팀과 사전 점검 필요.</p>
+      </div>
+    </div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-coral">Performance</span>
+      <h3>Microsoft DirectStorage 지원</h3>
+      <p class="desc">
+        NVMe 스토리지에서 텍스처, 메시, ECS/DOTS 데이터를 <strong>GPU로 직접 로드</strong>하여
+        로딩 시간을 <strong>최대 40%까지 단축</strong>합니다. Player Settings에서 "Enable Direct Storage" 옵션으로 활성화하며,
+        Windows Standalone 빌드 대상입니다.
+      </p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="label">성능 향상</div>
+          <div class="value">지원 에셋 타입 로드 시간 최대 40% 감소</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">플랫폼</div>
+          <div class="value">Windows 10/11 (NVMe SSD 필요)</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">현재 제한</div>
+          <div class="value">압축/해제에는 미적용 (C# API 개발 중)</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">활성화</div>
+          <div class="value">Player Settings → Enable Direct Storage</div>
+        </div>
+      </div>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용</div>
+        <p>AEGIS는 모바일 타겟이므로 직접 적용 대상은 아닙니다. 다만 PC 개발/QA 빌드에서의 이터레이션 속도 향상, 향후 PC 크로스플랫폼 확장 시 중요한 기술 자산이 됩니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ANALYSIS / QA ===== -->
+  <div class="section" id="analysis">
+    <div class="section-label">Analysis / QA</div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-blue">Analysis</span>
+      <h3>Project Auditor — 에디터 기본 내장</h3>
+      <p class="desc">
+        이전에는 별도 패키지(<code>com.unity.project-auditor</code>)로 설치해야 했던 Project Auditor가
+        <strong>에디터에 기본 내장</strong>되었습니다. 프로젝트의 스크립트, 에셋, 코드를 정적 분석하여
+        성능 개선 포인트와 권장 사항을 한 번의 클릭으로 리포트합니다.
+      </p>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="label">분석 항목</div>
+          <div class="value">코드 할당, 셰이더 배리언트, SRP Batcher 호환성</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">접근</div>
+          <div class="value">Window → Analysis → Project Auditor</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">출력</div>
+          <div class="value">.projectauditor 파일 저장/로드, 어셈블리 필터링</div>
+        </div>
+        <div class="detail-item">
+          <div class="label">셰이더 분석</div>
+          <div class="value">패스 수, 키워드 수, 빌트 배리언트 수, GPU 인스턴싱</div>
+        </div>
+      </div>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용 — 높은 관련성</div>
+        <p>M2 빌드 퍼포먼스 분석 파이프라인에 즉시 통합 가능. 기존 Python 로그 분석으로 수동 점검하던 셰이더 배리언트, Draw Call 이슈를 에디터 안에서 자동 스캐닝. 저사양 기기 대상 셰이더 최적화 검증에 매우 유용합니다.</p>
+      </div>
+    </div>
+
+    <div class="feature-card fade-in">
+      <span class="tag tag-blue">Statistics</span>
+      <h3>Rendering Statistics 윈도우 리디자인</h3>
+      <p class="desc">
+        Rendering Statistics 윈도우가 <strong>시각적으로 전면 개편</strong>되었습니다.
+        이전 레거시 통계 창 대비 더 읽기 쉬운 레이아웃과 실시간 지표 확인이 가능합니다.
+      </p>
+      <div class="aegis-box">
+        <div class="aegis-label">⚡ AEGIS 활용</div>
+        <p>Draw Call, 배칭 효율, 메모리 사용량 등을 실시간으로 확인하면서 씬 작업이 가능해져, 아트팀·프로그래밍팀 모두의 최적화 작업 효율이 올라갑니다.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADDITIONAL ===== -->
+  <div class="section" id="additional">
+    <div class="section-label">Additional Notable Changes</div>
+
+    <div class="minor-grid">
+      <div class="minor-card fade-in">
+        <h4>Mesh LOD 디버깅</h4>
+        <p>Scene View에서 LOD 레벨 라벨 토글, Inspector에서 카메라 비율별 LOD 레벨 확인 선택 바 추가</p>
+        <div class="minor-aegis">AEGIS: 캐릭터(프리드웬, 카야 등) LOD 셋팅 시각적 검증</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>Adaptive Performance</h4>
+        <p>Basic 프로바이더가 PS4, PS5, Xbox Series X/S 콘솔 + 데스크톱 + 모바일 모두 지원</p>
+        <div class="minor-aegis">AEGIS: 동일 프레임워크로 다중 플랫폼 성능 스케일링 통일 관리</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>UI Toolkit</h4>
+        <p>UXML/USS 파일 드래그 앤 드롭, 프로젝트 단위 UI 프리뷰 테마 설정, 버전 컨트롤 동기화</p>
+        <div class="minor-aegis">AEGIS: 3-Zone UI 구조 작업 시 UI Builder 워크플로 개선</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>Shader Graph</h4>
+        <p>Terrain 셰이더 템플릿, "Delete and Reconnect" 노드 이름 변경, 단축키 개선</p>
+        <div class="minor-aegis">AEGIS: 저사양 기기용 커스텀 지형 셰이더 제작 간소화</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>Graph Toolkit 내장</h4>
+        <p>Shader Graph, VFX Graph 기반인 Graph Toolkit이 에디터 빌트인 모듈로 편입</p>
+        <div class="minor-aegis">AEGIS: 패키지 설치 없이 즉시 그래프 도구 사용</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>XR / AR Foundation</h4>
+        <p>마커 트래킹(QR코드), 메시 서브메시 분류, 레이캐스트 최대 거리 제약 API</p>
+        <div class="minor-aegis">AEGIS: 현재 해당 없음 (향후 AR 기능 확장 시 참고)</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>2D URP 개선</h4>
+        <p>커스텀 렌더 패스를 C# 스크립트로 생성, 런타임 스프라이트 아틀라스 생성</p>
+        <div class="minor-aegis">AEGIS: 2D UI 오버레이 렌더링 최적화 가능성</div>
+      </div>
+      <div class="minor-card fade-in">
+        <h4>Version Control</h4>
+        <p>모든 뷰/다이얼로그 재디자인, 경로 축약 개선, 진행률 표시기, 오버레이 아이콘 개선</p>
+        <div class="minor-aegis">AEGIS: 팀 협업 시 VCS 사용성 향상</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ROADMAP ===== -->
+  <div id="roadmap">
+    <div class="roadmap fade-in">
+      <div class="roadmap-icon">🗺️</div>
+      <div class="roadmap-text">
+        <h4>Unity 6.x 로드맵 참고</h4>
+        <p>
+          6.5~6.7까지 분기별 Supported Update 릴리즈 예정.
+          <strong>CoreCLR 마이그레이션</strong>(6.7에서 실험적 데스크톱 플레이어),
+          <strong>ECS-GameObject 점진적 통합</strong>,
+          <strong>URP/HDRP 공유 Render Graph 백엔드</strong>,
+          <strong>Burst 1.8.25</strong>(크로스 CPU determinism),
+          셰이더 컴파일 시간 최대 45% 단축 등이 계획됨.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELEASE BAR -->
+  <div class="release-bar">
+    <div class="release-inner">
+      <div class="left">
+        Unity <strong>6.3 LTS</strong> → 2027.12까지 지원 · Unity <strong>6.0 LTS</strong> → 2026.10까지 지원
+      </div>
+      <span class="release-tag">Runtime Fee 폐지 확정</span>
+    </div>
+  </div>
+
+  <div style="padding-bottom:80px"></div>
+</div>
+
+<script>
+// Scroll-triggered fade-in
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// Nav active state
+const pills = document.querySelectorAll('.nav-pill');
+const sections = document.querySelectorAll('.section, #roadmap');
+const navObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      const id = e.target.id;
+      pills.forEach(p => p.classList.toggle('active', p.getAttribute('href') === '#' + id));
+    }
+  });
+}, { threshold: 0.2, rootMargin: '-80px 0px -60% 0px' });
+sections.forEach(s => navObs.observe(s));
+</script>
+</body>
+</html>
